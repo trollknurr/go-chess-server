@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 // Фигуры
@@ -48,17 +49,50 @@ func (m Color) String() string { return colors[m] }
 
 // Клетка
 type Cell struct {
-	unit  Unit
-	color Color
+	CellUnit  Unit
+	CellColor Color
 }
 
-func (c Cell) String() string { return fmt.Sprint("[", c.unit, c.color, "],") }
+var cellfigures = [...]string{
+	" ",
+	"♙",
+	"♖",
+	"♘",
+	"♗",
+	"♕",
+	"♔",
+	"♟",
+	"♜",
+	"♞",
+	"♝",
+	"♛",
+	"♚",
+}
+
+func (c Cell) String() string {
+	i := c.CellUnit
+	if c.CellColor == BLACK {
+		i += 6
+	}
+	return fmt.Sprintf("%s", cellfigures[i])
+}
 
 //Поле
 type Field [8][8]Cell
 
-func InitGameField() *Field {
-	return &Field{
+func (f Field) String() string {
+	rows := [8]string{}
+	row := [8]string{}
+	for i := range f {
+		for j := range f[i] {
+			row[j] = f[i][j].String()
+		}
+		rows[i] = strings.Join(row[:], " ")
+	}
+	return fmt.Sprintf("%s\n", strings.Join(rows[:], "\n"))
+}
+func InitGameField() Field {
+	return Field{
 		{Cell{CASTLE, WHITE}, Cell{KNIGHT, WHITE}, Cell{BISHOP, WHITE}, Cell{QUEEN, WHITE}, Cell{KING, WHITE}, Cell{BISHOP, WHITE}, Cell{KNIGHT, WHITE}, Cell{CASTLE, WHITE}},
 		{Cell{MAN, WHITE}, Cell{MAN, WHITE}, Cell{MAN, WHITE}, Cell{MAN, WHITE}, Cell{MAN, WHITE}, Cell{MAN, WHITE}, Cell{MAN, WHITE}, Cell{MAN, WHITE}},
 		{Cell{EMPTY, FREE}, Cell{EMPTY, FREE}, Cell{EMPTY, FREE}, Cell{EMPTY, FREE}, Cell{EMPTY, FREE}, Cell{EMPTY, FREE}, Cell{EMPTY, FREE}, Cell{EMPTY, FREE}},
